@@ -383,6 +383,11 @@
     // Initial render
     renderHeader();
     renderProducts();
+
+    // Check if admin mode should be opened
+    if (window.location.hash === '#admin') {
+      openAdmin();
+    }
   </script>
 </body>
 </html>
