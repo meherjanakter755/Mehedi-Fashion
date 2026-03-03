@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mehedi Fashion</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+    }
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #333;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 100;
+    }
+    .admin-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .admin-panel.active {
+      display: block;
+    }
+    .admin-content {
+      background: white;
+      margin: 30px auto;
+      padding: 30px;
+      max-width: 600px;
+      border-radius: 12px;
+    }
+    .admin-content h2 {
+      color: #d6336c;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: Arial, sans-serif;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .admin-btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .admin-btn-group button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .btn-save {
+      background: #25D366;
+      color: white;
+    }
+    .btn-cancel {
+      background: #999;
+      color: white;
+    }
+    .btn-delete {
+      background: #ff6b6b;
+      color: white;
+    }
+    .products-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin: 20px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .product-item {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      background: #f5f5f5;
+      margin: 5px;
+      border-radius: 6px;
+    }
+    .product-item:hover {
+      background: #e8e8e8;
+    }
+    header {
+      text-align: center;
+      background-color: #d6336c;
+      color: white;
+      padding: 20px 0;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 30px 10px;
+      gap: 20px;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      width: 250px;
+      text-align: center;
+      padding: 15px;
+    }
+    .product-card img {
+      max-width: 100%;
+      border-radius: 12px;
+      height: 250px;
+      object-fit: cover;
+    }
+    .product-card h2 {
+      font-size: 20px;
+      margin: 10px 0 5px;
+      color: #333;
+    }
+    .price {
+      font-size: 18px;
+      color: #d6336c;
+      margin: 5px 0;
+    }
+    .order-btn {
+      display: inline-block;
+      background-color: #25D366;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 50px;
+      margin-top: 10px;
+      transition: background 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+    .order-btn:hover {
+      background-color: #1ebe5d;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <button class="admin-btn" onclick="openAdmin()">⚙️ Admin</button>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-content">
+      <h2>Admin Panel</h2>
+      
+      <div class="form-group">
+        <label>📞 WhatsApp Number (শুধু সংখ্যা):</label>
+        <input type="text" id="whatsappNum" placeholder="e.g., 8801933514476">
+      </div>
+
+      <div class="form-group">
+        <label>🏢 Shop Name:</label>
+        <input type="text" id="shopName" placeholder="e.g., Mehedi Fashion">
+      </div>
+
+      <div class="form-group">
+        <label>📝 Tagline:</label>
+        <input type="text" id="tagline" placeholder="e.g., Premium Quality Dresses">
+      </div>
+
+      <h3 style="margin-top: 30px; color: #d6336c;">পণ্য যোগ করুন / সংশোধন করুন</h3>
+
+      <div class="form-group">
+        <label>পণ্যের নাম:</label>
+        <input type="text" id="productName" placeholder="e.g., Elegant Dress">
+      </div>
+
+      <div class="form-group">
+        <label>ছবির লিংক:</label>
+        <input type="text" id="productImage" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label>দাম (BDT):</label>
+        <input type="number" id="productPrice" placeholder="1200">
+      </div>
+
+      <div class="form-group">
+        <label>ছোট বর্ণনা (ঐচ্ছিক):</label>
+        <textarea id="productDesc" placeholder="সেরা মানের ড্রেস..."></textarea>
+      </div>
+
+      <div class="products-list" id="productsList"></div>
+
+      <div class="admin-btn-group">
+        <button class="btn-save" onclick="addProduct()">✅ পণ্য যোগ করুন</button>
+        <button class="btn-cancel" onclick="closeAdmin()">❌ বন্ধ করুন</button>
+      </div>
+
+      <button class="btn-save" onclick="saveChanges()" style="width: 100%; margin-top: 20px;">💾 সব পরিবর্তন সংরক্ষণ করুন</button>
+    </div>
+  </div>
+
+  <header>
+    <h1 id="headerTitle">Mehedi Fashion</h1>
+    <p id="headerTagline">Premium Quality Dresses | Fast Delivery | WhatsApp Orders</p>
+  </header>
+
+  <section class="products" id="productsContainer"></section>
+
+  <footer>
+    &copy; 2026 <span id="footerShop">Mehedi Fashion</span> | Fast Delivery | WhatsApp Orders
+  </footer>
+
+  <script>
+    // Default data
+    const defaultData = {
+      whatsapp: '8801933514476',
+      shopName: 'Mehedi Fashion',
+      tagline: 'Premium Quality Dresses | Fast Delivery | WhatsApp Orders',
+      products: [
+        { id: 1, name: 'Elegant Dress 1', image: 'https://via.placeholder.com/250x250.png?text=Dress+1', price: 1200, desc: '' }
+      ]
+    };
+
+    let data = JSON.parse(localStorage.getItem('fashionStore')) || defaultData;
+    let selectedProductId = null;
+
+    function openAdmin() {
+      document.getElementById('adminPanel').classList.add('active');
+      document.getElementById('whatsappNum').value = data.whatsapp;
+      document.getElementById('shopName').value = data.shopName;
+      document.getElementById('tagline').value = data.tagline;
+      loadProductsList();
+    }
+
+    function closeAdmin() {
+      document.getElementById('adminPanel').classList.remove('active');
+      document.getElementById('productName').value = '';
+      document.getElementById('productImage').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productDesc').value = '';
+      selectedProductId = null;
+    }
+
+    function loadProductsList() {
+      const list = document.getElementById('productsList');
+      list.innerHTML = '';
+      data.products.forEach(product => {
+        const item = document.createElement('div');
+        item.className = 'product-item';
+        item.innerHTML = `<strong>${product.name}</strong> - BDT ${product.price} <button onclick="editProduct(${product.id})" style="float: right; background: #d6336c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">✎ Edit</button>`;
+        item.onclick = () => editProduct(product.id);
+        list.appendChild(item);
+      });
+    }
+
+    function editProduct(id) {
+      const product = data.products.find(p => p.id === id);
+      if (product) {
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productImage').value = product.image;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productDesc').value = product.desc || '';
+        selectedProductId = id;
+      }
+    }
+
+    function addProduct() {
+      const name = document.getElementById('productName').value.trim();
+      const image = document.getElementById('productImage').value.trim();
+      const price = parseInt(document.getElementById('productPrice').value) || 0;
+      const desc = document.getElementById('productDesc').value.trim();
+
+      if (!name || !image || price <= 0) {
+        alert('পণ্যের নাম, ছবি এবং দাম পূরণ করুন!');
+        return;
+      }
+
+      if (selectedProductId) {
+        const product = data.products.find(p => p.id === selectedProductId);
+        if (product) {
+          product.name = name;
+          product.image = image;
+          product.price = price;
+          product.desc = desc;
+          alert('পণ্য আপডেট হয়েছে!');
+        }
+      } else {
+        const newId = Math.max(...data.products.map(p => p.id), 0) + 1;
+        data.products.push({ id: newId, name, image, price, desc });
+        alert('পণ্য যোগ হয়েছে!');
+      }
+
+      document.getElementById('productName').value = '';
+      document.getElementById('productImage').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productDesc').value = '';
+      selectedProductId = null;
+      loadProductsList();
+      renderProducts();
+    }
+
+    function deleteProduct(id) {
+      if (confirm('নিশ্চিত? এই পণ্য মুছে ফেলবেন?')) {
+        data.products = data.products.filter(p => p.id !== id);
+        loadProductsList();
+        renderProducts();
+      }
+    }
+
+    function saveChanges() {
+      data.whatsapp = document.getElementById('whatsappNum').value.trim();
+      data.shopName = document.getElementById('shopName').value.trim();
+      data.tagline = document.getElementById('tagline').value.trim();
+
+      localStorage.setItem('fashionStore', JSON.stringify(data));
+      renderHeader();
+      alert('সব পরিবর্তন সংরক্ষণ হয়েছে! ✅');
+    }
+
+    function renderHeader() {
+      document.getElementById('headerTitle').textContent = data.shopName;
+      document.getElementById('headerTagline').textContent = data.tagline;
+      document.getElementById('footerShop').textContent = data.shopName;
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('productsContainer');
+      container.innerHTML = '';
+      
+      data.products.forEach(product => {
+        const waLink = `https://wa.me/${data.whatsapp}?text=Hello,%20I%20want%20to%20order%20${encodeURIComponent(product.name)}`;
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <h2>${product.name}</h2>
+          ${product.desc ? `<p style="color: #666; font-size: 14px;">${product.desc}</p>` : ''}
+          <p class="price">BDT ${product.price}</p>
+          <a class="order-btn" href="${waLink}" target="_blank">Order Now</a>
+          <button onclick="deleteProduct(${product.id})" style="display: block; margin-top: 10px; background: #ff6b6b; color: white; border: none; padding: 8px; width: 100%; border-radius: 6px; cursor: pointer;">🗑️ Delete</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Initial render
+    renderHeader();
+    renderProducts();
+  </script>
+</body>
+</html>
